@@ -1,0 +1,148 @@
+name: TF_Azure_Function_dev
+
+on:
+  push:
+  # run automatically on push to main or dev branch
+    branches:
+      # - 'main'
+      - 'dev'
+
+  # run manually for Terraform destroy
+  workflow_dispatch:
+    inputs:
+      terraform_env_remove:
+        description: 'Terraform delete'
+        required: true
+        type: boolean
+
+env:
+  TF_DIR: 'terraform/azure'
+  TF_DEV_ENV: 'DEV'
+  TF_DEV_RESOURCE: 'dev'
+  TF_PROD_ENV: 'PROD'
+  AZURE_FUNC_APP_NAME: 'tf-dev-func-app'
+  AZURE_FUNC_APP_PATH: 'source'
+  PYTHON_VERSION: '3.13'
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout repository'
+        uses: actions/checkout@v5
+
+      # # Azure credentials could be pass to TF via auto.vars or in a step (plan and apply) in env:
+      # # variables need to be defined in variables block and need to be refere in provider block
+      # - name: 'Terraform cloud variables'
+      #   working-directory: ${{ env.TF_DIR }}
+      #   id: vars
+      #   run: |
+      #     cat > workflow.auto.tfvars <<EOF
+      #     env_prefix = "${{ env.TF_DEV_ENV }}"
+      #     resource_prefix = "${{ env.TF_DEV_RESOURCE }}"
+      #     # ARM_TENANT_ID = "${{ secrets.AZURE_TENANT_ID }}"
+      #     # ARM_SUBSCRIPTION_ID = "${{ secrets.AZURE_SUB_ID }}"
+      #     # ARM_CLIENT_ID = "${{ secrets.AZURE_CLIENT_ID }}"
+      #     # ARM_CLIENT_SECRET = "${{ secrets.AZURE_CLIENT_SECRET }}"
+      #     EOF
+
+      # Install Terraform, provide credentials to the cloud
+      # Terraform API driven workflow
+      - name: 'Terraform initial setup'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TEAM_TOKEN }}
+          terraform_version: 1.13.3
+
+      # Format terraform configuration files into a canonical format and style
+      - name: 'Terraform Format'
+        working-directory: ${{ env.TF_DIR }}
+        id: fmt
+        run: terraform fmt
+ 
+      # Initializes a working directory containing Terraform configuration files
+      - name: 'Terraform Init'
+        working-directory: ${{ env.TF_DIR }}
+        id: init
+        run: terraform init
+       
+      # Validates the configuration files in a directory, referring only to the configuration and not accessing any remote services such as remote state, etc.
+      - name: 'Terraform Validate'
+        working-directory: ${{ env.TF_DIR }}
+        id: validate
+        # -no-color -> Disables terminal formatting sequences in the output
+        run: terraform validate -no-color
+
+      # # Creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure
+      # - name: 'Terraform Plan'
+      #   working-directory: ${{ env.TF_DIR }}
+      #   id: plan
+      #   run: terraform plan -no-color
+      #   continue-on-error: true
+      #   env:
+      #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+      #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      #     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      # # Executes the actions proposed in a Terraform plan
+      # - name: 'Terraform Apply'
+      #   working-directory: ${{ env.TF_DIR }}
+      #   # -auto-approve -> instruct Terraform to apply the plan without asking for confirmation
+      #   # -input=false -> Disables Terraform's default behavior of prompting for input
+      #   run: terraform apply -auto-approve -input=false
+      #   env:
+      #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+      #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      #     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+      # - name: 'Terraform Destroy'
+      #   if: ${{ github.event.inputs.terraform_env_remove == 'true' }}
+      #   working-directory: ${{ env.TF_DIR }}
+      #   run: terraform destroy --auto-approve
+      #   env:
+      #     ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      #     ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+      #     ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      #     ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+
+
+  # build-and-deploy:
+  #   name: 'Build and deploy'
+  #   needs: terraform
+  #   if: github.ref == 'refs/heads/dev'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - name: 'Checkout'
+  #     uses: actions/checkout@v4
+
+  #   - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: ${{ env.PYTHON_VERSION }}
+
+  #   - name: 'Resolve Project Dependencies Using Pip'
+  #     shell: bash
+  #     run: |
+  #       pushd './${{ env.AZURE_FUNC_APP_PATH}}'
+  #       python -m pip install --upgrade pip
+  #       pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+  #       popd
+
+  #   - name: 'Azure Cloud access'
+  #     uses: azure/login@v1
+  #     with:
+  #       creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+  #   - name: 'Run Azure Functions Action'
+  #     uses: azure/functions-action@v1
+  #     id: fa
+  #     with:
+  #       app-name: ${{ env.AZURE_FUNC_APP_NAME }}
+  #       package: ${{ env.AZURE_FUNC_APP_PATH }}
+  #       # SCM based deployment (below) doesn't work
+  #       # publish-profile: ${{ secrets.AZURE_FUNC_APP_PUBLISH_PROFILE }}
+  #       # scm-do-build-during-deployment: true
+  #       # enable-oryx-build: true

@@ -1,0 +1,101 @@
+name: TF_GCP_Function
+
+on:
+  push:
+  #   branches:
+  #     - 'main'
+  #     - 'dev'
+
+env:
+  TF_DIR: 'tf_gcp'
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    # refs/pull/<pr_number>/merge
+    # refs/tags/<tag_name>
+    if: github.ref == 'refs/heads/dev'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Checkout'
+        uses: actions/checkout@v4
+
+      # I'm creating workflow.auto.tfvars file so Terraform could read GOOGLE_PROJECT_ID variable
+      # GOOGLE_CREDENTIALS = "${{ secrets.GCP_CREDENTIALS }}" will not work
+      - name: 'Terraform cloud variables'
+        working-directory: ${{ env.TF_DIR }}
+        id: vars
+        run: |-
+          cat > workflow.auto.tfvars <<EOF
+          GOOGLE_PROJECT_ID = "${{ secrets.GCP_PROJECT_ID }}"
+          GOOGLE_REGION = "${{ vars.GCP_REGION }}"
+          EOF
+    
+      # Install Terraform, provide credentials to the cloud (for state control)
+      # Terraform API driven workflow
+      - name: 'Terraform initial setup'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+          terraform_version: 1.7.2
+
+      # Format terraform configuration files into a canonical format and style
+      - name: 'Terraform Format'
+        working-directory: ${{ env.TF_DIR }}
+        id: fmt
+        run: terraform fmt
+ 
+      # Initializes a working directory containing Terraform configuration files
+      - name: 'Terraform Init'
+        working-directory: ${{ env.TF_DIR }}
+        id: init
+        run: terraform init
+       
+      # Validates the configuration files in a directory, referring only to the configuration and not accessing any remote services such as remote state, etc.
+      - name: 'Terraform Validate'
+        working-directory: ${{ env.TF_DIR }}
+        id: validate
+        # -no-color -> Disables terminal formatting sequences in the output
+        run: terraform validate -no-color
+
+      # Creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure
+      - name: 'Terraform Plan'
+        working-directory: ${{ env.TF_DIR }}
+        id: plan
+        run: terraform plan -no-color
+        continue-on-error: true
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+
+      # Executes the actions proposed in a Terraform plan
+      - name: 'Terraform Apply'
+        working-directory: ${{ env.TF_DIR }}
+        # -auto-approve -> instruct Terraform to apply the plan without asking for confirmation
+        # -input=false -> Disables Terraform's default behavior of prompting for input
+        run: terraform apply -auto-approve -input=false
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+
+
+  build-and-deploy:
+    name: 'Build and deploy'
+    needs: terraform
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: 'Checkout'
+      uses: actions/checkout@v4
+
+    - name: 'Log in with GCP'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        # version: '>= 459.0.0'
+        version: 'latest'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
