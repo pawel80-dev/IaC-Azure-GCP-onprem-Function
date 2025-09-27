@@ -16,6 +16,8 @@ Authentication methods:
 Terraform state will be kept in Terraform Cloud (instead of Azure or GCP storage).  
 
 Access to Azure is done via Entra ID Application.  
-https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect
-https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal#register-an-application-with-microsoft-entra-id-and-create-a-service-principal
+https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-azure  
+https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect  
+https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azp  
+https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal#register-an-application-with-microsoft-entra-id-and-create-a-service-principal  
 AZURE_CLIENT_ID = Application ID

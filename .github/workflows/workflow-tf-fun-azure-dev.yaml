@@ -23,6 +23,7 @@ permissions:
 env:
   TF_TFVARS: 'dev.tfvars'
   TF_DIR: 'terraform/azure'
+  TF_ENV: 'development'
   AZURE_FUNC_APP_NAME: 'tf-dev-func-app'
   AZURE_FUNC_APP_PATH: 'source'
   PYTHON_VERSION: '3.13'
@@ -35,6 +36,7 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     # runs-on: self-hosted
+    environment: ${{ TF_ENV }}
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v5
