@@ -9,13 +9,13 @@ Github runners:
 - self-hosted for on-prem deployment  
 
 Authentication methods:
-- Azure: service principal with secrets  
+- Azure: OpenID Connect 
 - GCP: service account key JSON  
 - on-prem: TODO
 
 Terraform state will be kept in Terraform Cloud (instead of Azure or GCP storage).  
 
-Access to Azure is done via Entra ID Application.  
+Access to Azure is done via OpenID Connect (federated credentials in Entra ID application).  
 https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-azure  
 https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect  
 https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azp  

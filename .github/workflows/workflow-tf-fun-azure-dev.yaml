@@ -36,7 +36,7 @@ jobs:
     name: 'Terraform'
     runs-on: ubuntu-latest
     # runs-on: self-hosted
-    environment: ${{ TF_ENV }}
+    environment: development
     steps:
       - name: 'Checkout repository'
         uses: actions/checkout@v5
