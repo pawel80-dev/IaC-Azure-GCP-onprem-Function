@@ -58,7 +58,7 @@ jobs:
         working-directory: ${{ env.TF_DIR }}
         id: validate
         # -no-color -> Disables terminal formatting sequences in the output
-        run: terraform validate -no-color
+        run: terraform validate -no-color -var-file=${{ env.TF_TFVARS }}
 
       # Creates an execution plan, which lets you preview the changes that Terraform plans to make to your infrastructure
       - name: 'Terraform Plan'
