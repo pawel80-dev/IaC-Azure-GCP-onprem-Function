@@ -15,7 +15,7 @@ Authentication methods:
 
 Terraform state will be kept in Terraform Cloud (instead of Azure or GCP storage).  
 
-Access to Azure is done via OpenID Connect (federated credentials in Entra ID application).  
+Access to Azure is done via OpenID Connect (federated credentials in Entra ID application, Entity type = Environment).  
 https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-azure  
 https://learn.microsoft.com/en-us/azure/developer/github/connect-from-azure-openid-connect  
 https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azp  
