@@ -16,10 +16,8 @@ on:
         type: boolean
 
 env:
+  TF_TFVARS: 'dev.tfvars'
   TF_DIR: 'terraform/azure'
-  TF_DEV_ENV: 'DEV'
-  TF_DEV_RESOURCE: 'dev'
-  TF_PROD_ENV: 'PROD'
   AZURE_FUNC_APP_NAME: 'tf-dev-func-app'
   AZURE_FUNC_APP_PATH: 'source'
   PYTHON_VERSION: '3.13'
@@ -66,15 +64,15 @@ jobs:
       - name: 'Terraform Plan'
         working-directory: ${{ env.TF_DIR }}
         id: plan
-        run: terraform plan -no-color
-        continue-on-error: true
+        run: terraform plan -no-color -var-file=${{ env.TF_TFVARS }}
+        # continue-on-error: true
 
       # Executes the actions proposed in a Terraform plan
       - name: 'Terraform Apply'
         working-directory: ${{ env.TF_DIR }}
         # -auto-approve -> instruct Terraform to apply the plan without asking for confirmation
         # -input=false -> Disables Terraform's default behavior of prompting for input
-        run: terraform apply -auto-approve -input=false
+        run: terraform apply -auto-approve -input=false -var-file=${{ env.TF_TFVARS }}
 
       - name: 'Terraform Destroy'
         if: ${{ github.event.inputs.terraform_env_remove == 'true' }}
