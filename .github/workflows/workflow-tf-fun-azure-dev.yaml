@@ -23,13 +23,12 @@ permissions:
 env:
   TF_TFVARS: 'dev.tfvars'
   TF_DIR: 'terraform/azure'
-  TF_ENV: 'development'
   AZURE_FUNC_APP_NAME: 'tf-dev-func-app'
   AZURE_FUNC_APP_PATH: 'source'
   PYTHON_VERSION: '3.13'
-  # ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  # ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
-  # ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUB_ID }}
+  ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
 jobs:
   terraform:
