@@ -62,7 +62,7 @@ resource "azurerm_user_assigned_identity" "mi_func_v2" {
   resource_group_name = azurerm_resource_group.rg_func_v2.name
 }
 
-# data "azurerm_client_config" "current" {}
+data "azurerm_client_config" "current" {}
 
 resource "azurerm_key_vault" "kv_func_v2" {
   name                        = var.azure_kv
