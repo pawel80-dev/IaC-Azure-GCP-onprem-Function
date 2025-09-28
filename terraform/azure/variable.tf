@@ -58,8 +58,3 @@ variable "azure_func_app" {
   default = ""
 }
 
-# variable "azure_func_python_v" {
-#   description = "Function Python version"
-#   type = string
-#   default = ""
-# }
