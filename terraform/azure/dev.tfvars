@@ -3,4 +3,6 @@ azure_region = "polandcentral"
 azure_service_plan = "func-v2-service-plan"
 azure_storage_account = "funcv2storage"
 azure_mi = "func-v2-mi"
-
+azure_kv = "func-v2-kv"
+azure_log_analytic_workspace = "func-v2-log-analytic-workspace"
+azure_app_insights = "func-v2-app-insights"

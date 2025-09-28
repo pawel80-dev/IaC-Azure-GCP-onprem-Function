@@ -23,7 +23,25 @@ variable "azure_storage_account" {
 }
 
 variable "azure_mi" {
-  description = "Storage Account name"
+  description = "Managed Identity name"
+  type = string
+  default = ""
+}
+
+variable "azure_kv" {
+  description = "Key Vault name"
+  type = string
+  default = ""
+}
+
+variable "azure_log_analytic_workspace" {
+  description = "Log Analytic Workspace name"
+  type = string
+  default = ""
+}
+
+variable "azure_app_insights" {
+  description = "Application Insights name"
   type = string
   default = ""
 }
