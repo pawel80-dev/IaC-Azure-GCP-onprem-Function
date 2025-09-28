@@ -22,6 +22,12 @@ variable "azure_storage_account" {
   default = ""
 }
 
+variable "azure_storage_container" {
+  description = "Storage Container name"
+  type = string
+  default = ""
+}
+
 variable "azure_mi" {
   description = "Managed Identity name"
   type = string

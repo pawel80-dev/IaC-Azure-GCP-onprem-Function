@@ -32,6 +32,13 @@ resource "azurerm_storage_account" "storage_func_v2" {
   }
 }
 
+# Needed for Function App Flex Consumption
+resource "azurerm_storage_container" "storage_container_func_v2" {
+  name                  = var.azure_storage_container
+  storage_account_id    = azurerm_storage_account.storage_func_v2.id
+  container_access_type = "private"
+}
+
 resource "azurerm_log_analytics_workspace" "log_analytic_workspace_func_v2" {
   name                = var.azure_log_analytic_workspace
   location            = azurerm_resource_group.rg_func_v2.location
@@ -94,13 +101,19 @@ resource "azurerm_key_vault_access_policy" "kv_access_policy_func_v2" {
   ]
 }
 
-resource "azurerm_linux_function_app" "func_app_v2" {
-  name                       = var.azure_func_app
-  location                   = azurerm_resource_group.rg_func_v2.location
-  resource_group_name        = azurerm_resource_group.rg_func_v2.name
-  storage_account_name       = azurerm_storage_account.storage_func_v2.name
-  storage_account_access_key = azurerm_storage_account.storage_func_v2.primary_access_key
-  service_plan_id            = azurerm_service_plan.sp_func_v2.id
+resource "azurerm_function_app_flex_consumption" "func_app_v2" {
+  name                        = var.azure_func_app
+  location                    = azurerm_resource_group.rg_func_v2.location
+  resource_group_name         = azurerm_resource_group.rg_func_v2.name
+  storage_container_type      = "blobContainer"
+  storage_container_endpoint  = "${azurerm_storage_account.storage_func_v2.primary_blob_endpoint}${azurerm_storage_container.storage_container_func_v2.name}"
+  storage_authentication_type = "StorageAccountConnectionString"
+  storage_access_key          = azurerm_storage_account.storage_func_v2.primary_access_key
+  runtime_name                = "python"
+  runtime_version             = "3.13"
+#   storage_account_name       = azurerm_storage_account.storage_func_v2.name
+#   storage_account_access_key = azurerm_storage_account.storage_func_v2.primary_access_key
+  service_plan_id             = azurerm_service_plan.sp_func_v2.id
 
   app_settings = {
     FUNCTIONS_WORKER_RUNTIME        = "python"
@@ -111,9 +124,9 @@ resource "azurerm_linux_function_app" "func_app_v2" {
   site_config {
     application_insights_key               = azurerm_application_insights.app_insights_func_v2.instrumentation_key
     application_insights_connection_string = azurerm_application_insights.app_insights_func_v2.connection_string
-    application_stack {
-      python_version = var.azure_func_python_v
-    }
+    # application_stack {
+    #   python_version = var.azure_func_python_v
+    # }
   }
 
   lifecycle {
