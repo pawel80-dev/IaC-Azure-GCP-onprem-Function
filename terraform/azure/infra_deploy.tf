@@ -93,3 +93,30 @@ resource "azurerm_key_vault_access_policy" "kv_access_policy_func_v2" {
     "List"
   ]
 }
+
+resource "azurerm_linux_function_app" "func_app_v2" {
+  name                       = var.azure_func_app
+  location                   = azurerm_resource_group.rg_func_v2.location
+  resource_group_name        = azurerm_resource_group.rg_func_v2.name
+  storage_account_name       = azurerm_storage_account.storage_func_v2.name
+  storage_account_access_key = azurerm_storage_account.storage_func_v2.primary_access_key
+  service_plan_id            = azurerm_service_plan.sp_func_v2.id
+
+  app_settings = {
+    FUNCTIONS_WORKER_RUNTIME        = "python"
+    FUNCTIONS_EXTENSION_VERSION      = "~4"
+    WEBSITE_RUN_FROM_PACKAGE        = "1" # for CI/CD pipelines
+  }
+
+  site_config {
+    application_insights_key               = azurerm_application_insights.app_insights_func_v2.instrumentation_key
+    application_insights_connection_string = azurerm_application_insights.app_insights_func_v2.connection_string
+    application_stack {
+      python_version = var.azure_func_python_v
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [ tags ]
+  }
+}

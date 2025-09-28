@@ -45,3 +45,15 @@ variable "azure_app_insights" {
   type = string
   default = ""
 }
+
+variable "azure_func_app" {
+  description = "Function App name"
+  type = string
+  default = ""
+}
+
+variable "azure_func_python_v" {
+  description = "Function Python version"
+  type = string
+  default = ""
+}
