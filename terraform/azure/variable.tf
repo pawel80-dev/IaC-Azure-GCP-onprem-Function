@@ -57,4 +57,3 @@ variable "azure_func_app" {
   type = string
   default = ""
 }
-
