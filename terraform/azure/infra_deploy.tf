@@ -92,8 +92,4 @@ resource "azurerm_key_vault_access_policy" "kv_access_policy_func_v2" {
     "Get", 
     "List"
   ]
-
-  lifecycle {
-    ignore_changes = [ tags ]
-  }
 }
