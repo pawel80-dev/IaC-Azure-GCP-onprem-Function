@@ -1,19 +1,19 @@
-# IaC-Azure-GCP-onprem-Function
-Terraform, build and deploy Function type of service in Azure, GCP and on-prem infra.  
+# IaC-Azure-GC-onprem-Function
+Terraform, build and deploy Function type of service in Azure, GC and on-prem infra.  
 Each deployment is in a separate workflow (.yaml) file.  
 Each workflow runs independent from each other.  
 All jobs in the workflow start in pararel.  
 
 Github runners:
-- hosted for Azure and GCP deployments  
+- hosted for Azure and GC deployments  
 - self-hosted for on-prem deployment  
 
 Authentication methods:
 - Azure: OpenID Connect 
-- GCP: service account key JSON (review)  
+- GC: service account key JSON (review)  
 - on-prem (TODO)  
 
-Terraform state will be kept in Terraform Cloud (instead of Azure or GCP storage).  
+Terraform state will be kept in Terraform Cloud (instead of Azure or GC storage).  
 
 Access to Azure is done via OpenID Connect (federated credentials in Entra ID application, Entity type = Environment, AZURE_CLIENT_ID = Application ID). Useful links:  
 [GitHub OIDC in Azure](https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-azure)  
