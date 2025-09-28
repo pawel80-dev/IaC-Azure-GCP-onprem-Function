@@ -9,3 +9,21 @@ variable "azure_region" {
   type = string
   default = ""
 }
+
+variable "azure_service_plan" {
+  description = "Service Plan name"
+  type = string
+  default = ""
+}
+
+variable "azure_storage_account" {
+  description = "Storage Account name"
+  type = string
+  default = ""
+}
+
+variable "azure_mi" {
+  description = "Storage Account name"
+  type = string
+  default = ""
+}
