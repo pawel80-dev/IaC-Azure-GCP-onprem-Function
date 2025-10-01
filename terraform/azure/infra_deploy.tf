@@ -110,23 +110,14 @@ resource "azurerm_function_app_flex_consumption" "func_app_v2" {
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.storage_func_v2.primary_access_key
   runtime_name                = "python"
-  runtime_version             = "3.13"
+  runtime_version             = "3.12"
 #   storage_account_name       = azurerm_storage_account.storage_func_v2.name
 #   storage_account_access_key = azurerm_storage_account.storage_func_v2.primary_access_key
   service_plan_id             = azurerm_service_plan.sp_func_v2.id
 
-#   app_settings = {
-#     FUNCTIONS_WORKER_RUNTIME        = "python"
-#     FUNCTIONS_EXTENSION_VERSION      = "~4"
-#     WEBSITE_RUN_FROM_PACKAGE        = "1" # for CI/CD pipelines
-#   }
-
   site_config {
     application_insights_key               = azurerm_application_insights.app_insights_func_v2.instrumentation_key
     application_insights_connection_string = azurerm_application_insights.app_insights_func_v2.connection_string
-    # application_stack {
-    #   python_version = var.azure_func_python_v
-    # }
   }
 
   lifecycle {
