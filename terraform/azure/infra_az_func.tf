@@ -110,10 +110,15 @@ resource "azurerm_function_app_flex_consumption" "func_app_v2" {
   storage_authentication_type = "StorageAccountConnectionString"
   storage_access_key          = azurerm_storage_account.storage_func_v2.primary_access_key
   runtime_name                = "python"
-  runtime_version             = "3.12"
+  runtime_version             = var.azure_py_version
 #   storage_account_name       = azurerm_storage_account.storage_func_v2.name
 #   storage_account_access_key = azurerm_storage_account.storage_func_v2.primary_access_key
   service_plan_id             = azurerm_service_plan.sp_func_v2.id
+
+# Do not add the WEBSITE_RUN_FROM_PACKAGE on the Flex Consumption plan...
+  # app_settings = {
+  #   WEBSITE_RUN_FROM_PACKAGE  = 1
+  # }
 
   site_config {
     application_insights_key               = azurerm_application_insights.app_insights_func_v2.instrumentation_key

@@ -57,3 +57,9 @@ variable "azure_func_app" {
   type = string
   default = ""
 }
+
+variable "azure_py_version" {
+  description = "Function App Python version"
+  type = string
+  default = ""
+}
