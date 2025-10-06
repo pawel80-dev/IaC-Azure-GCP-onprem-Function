@@ -21,8 +21,8 @@ permissions:
   contents: read   # Required for checkout
 
 env:
-  TF_TFVARS: 'dev.tfvars'
   TF_DIR: 'terraform/azure'
+  TF_TFVARS: 'dev.tfvars'
   AZURE_FUNC_APP_NAME: 'tf-dev-func-app'
   AZURE_FUNC_APP_PATH: 'source'
   PYTHON_VERSION: '3.13'
