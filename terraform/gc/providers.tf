@@ -2,7 +2,6 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      # version = "~> 3.83.0"
     }
   }
   # Terraform cloud
@@ -16,7 +15,7 @@ terraform {
 
 provider "google" {
   # credentials =   "${var.GOOGLE_CREDENTIALS}"
-  project     =   "${var.GOOGLE_PROJECT_ID}"
-  region      =   "${var.GOOGLE_REGION}"
+  project     =   var.GOOGLE_PROJECT_ID
+  region      =   var.GOOGLE_REGION
   # zone        = var.GCP_ZONE
 }
