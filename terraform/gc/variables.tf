@@ -4,8 +4,8 @@
 #   default = ""
 # }
 
-variable "GOOGLE_PROJECT_ID" {
-  description = "GCP project id"
+variable "gc_project_id" {
+  description = "GC project id"
   type    = string
   default = ""
 }
