@@ -7,6 +7,12 @@ resource "random_id" "default" {
   byte_length = 8
 }
 
+resource "google_storage_bucket" "default" {
+  name                        = "${random_id.default.hex}-gcf-source" # Every bucket name must be globally unique
+  location                    = var.gc_region
+  uniform_bucket_level_access = true
+}
+
 # resource "google_cloud_run_v2_service" "default" {
 #   name     = "cloudrun-service"
 #   location = var.gc_region
