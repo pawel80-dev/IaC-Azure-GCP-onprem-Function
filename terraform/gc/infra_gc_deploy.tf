@@ -1,76 +1,40 @@
-# In GC there are no RG, resources are places in Projects
 # https://cloud.google.com/run/docs/functions/comparison
-# Legacy: google_cloudfunctions_function
-# Latest: google_cloud_run_v2_service
 
 resource "random_id" "default" {
   byte_length = 8
 }
 
-resource "google_storage_bucket" "default" {
+resource "google_storage_bucket" "bucket" {
   name                        = "${random_id.default.hex}-gcf-source" # Every bucket name must be globally unique
   location                    = var.gc_region
   uniform_bucket_level_access = true
 }
 
-# resource "google_cloud_run_v2_service" "default" {
-#   name     = "cloudrun-service"
-#   location = var.gc_region
-#   deletion_protection = false
-#   ingress = "INGRESS_TRAFFIC_ALL"
+resource "google_storage_bucket_object" "object" {
+  name   = "function-source.zip"
+  bucket = google_storage_bucket.bucket.name
+  source = "function-source.zip"  # Add path to the zipped function source code
+}
 
-#   template {
-#     containers {
-#       image = "us-docker.pkg.dev/cloudrun/container/hello"
-#       base_image_uri = "us-central1-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22"
-#     }
-#   }
-#   build_config {
-#     source_location = "gs://${google_storage_bucket.bucket.name}/${google_storage_bucket_object.object.name}"
-#     function_target = "helloHttp"
-#     image_uri = "us-docker.pkg.dev/cloudrun/container/hello"
-#     base_image = "us-central1-docker.pkg.dev/serverless-runtimes/google-22-full/runtimes/nodejs22"
-#     enable_automatic_updates = true
-#     environment_variables = {
-#       FOO_KEY = "FOO_VALUE"
-#       BAR_KEY = "BAR_VALUE"
-#     }
-#     service_account = google_service_account.cloudbuild_service_account.id
-#   }
-#   depends_on = [
-#     google_project_iam_member.act_as,
-#     google_project_iam_member.logs_writer
-#   ]
-# }
+resource "google_cloudfunctions2_function" "function" {
+  name        = "function-v2"
+  location    = var.gc_region
+  description = "a new function"
 
-# data "google_project" "project" {
-# }
+  build_config {
+    runtime   = "nodejs20"
+    entry_point = "helloHttp"  # Set the entry point 
+    source {
+      storage_source {
+        bucket = google_storage_bucket.bucket.name
+        object = google_storage_bucket_object.object.name
+      }
+    }
+  }
 
-# resource "google_storage_bucket" "bucket" {
-#   name     = "${data.google_project.project.project_id}-gcf-source"  # Every bucket name must be globally unique
-#   # location = "US"
-#   location = var.gc_region
-#   uniform_bucket_level_access = true
-# }
-
-# resource "google_storage_bucket_object" "object" {
-#   name   = "function-source.zip"
-#   bucket = google_storage_bucket.bucket.name
-#   source = "function_source.zip"  # Add path to the zipped function source code
-# }
-
-# resource "google_service_account" "cloudbuild_service_account" {
-#   account_id = "build-sa"
-# }
-
-# resource "google_project_iam_member" "act_as" {
-#   project = data.google_project.project.project_id
-#   role    = "roles/iam.serviceAccountUser"
-#   member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
-# }
-
-# resource "google_project_iam_member" "logs_writer" {
-#   project = data.google_project.project.project_id
-#   role    = "roles/logging.logWriter"
-#   member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
-# }
+  service_config {
+    max_instance_count  = 1
+    available_memory    = "256M"
+    timeout_seconds     = 60
+  }
+}

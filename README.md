@@ -21,6 +21,6 @@ Access to Azure is done via OpenID Connect (federated credentials in Entra ID ap
 [Register a Microsoft Entra app](https://learn.microsoft.com/en-us/entra/identity-platform/howto-create-service-principal-portal#register-an-application-with-microsoft-entra-id-and-create-a-service-principal)  
 [Microsoft Configure a federated identity credential on an app](https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-create-trust?pivots=identity-wif-apps-methods-azp)  
   
-Access to Google Cloud is done via  
-[Github OIDC in Google Cloud](https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-google-cloud-platform)
+Access to Google Cloud is done via OpenID Connect. Useful links:  
+[Github OIDC in Google Cloud](https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-google-cloud-platform)  
 [GitHub authentication to Google Cloud via a direct Workload Identity Federation config](https://github.com/google-github-actions/auth?tab=readme-ov-file#direct-wif)  

@@ -15,10 +15,10 @@ on:
         required: true
         type: boolean
 
-# Permission to request the OIDC JWT ID token (Azure Authentication)
+# Permission to request the OIDC JWT ID token (Azure/GC Authentication)
 permissions:
-  id-token: write  # Required for OIDC
-  contents: read   # Required for checkout
+  id-token: 'write'  # Required for OIDC
+  contents: 'read'   # Required for checkout
 
 env:
   TF_DIR: 'terraform/azure'
