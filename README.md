@@ -1,5 +1,9 @@
 # IaC-Azure-GC-onprem-Function
-Terraform, build and deploy Function type of service in Azure, GC and on-prem infra.  
+
+> [!NOTE]
+> GC Function doesn't need Terraform created infra, code is deployed directy to Cloud Run Services Function. For more details please check the repo: [IaC-SDWAN-config-generator](https://github.com/pawel80-dev/IaC-SDWAN-config-generator)  
+
+Terraform, build and deploy Function type of service in Azure and on-prem infra.  
 Each deployment is in a separate workflow (.yaml) file.  
 Each workflow runs independent from each other.  
 All jobs in the workflow start in pararel.  
@@ -9,8 +13,8 @@ Github runners:
 - self-hosted for on-prem deployment  
 
 Authentication methods:
-- Azure: OpenID Connect 
-- GC: service account key JSON (review)  
+- Azure: OpenID Connect  
+- GC: service OpenID Connect  
 - on-prem (TODO)  
 
 Terraform state will be kept in Terraform Cloud (instead of Azure or GC storage).  
